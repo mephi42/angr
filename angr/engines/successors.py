@@ -85,7 +85,7 @@ class SimSuccessors:
         return iter(self.flat_successors)
 
     def add_successor(self, state, target, guard, jumpkind, add_guard=True, exit_stmt_idx=None, exit_ins_addr=None,
-                      source=None):
+                      source=None, jump_lr=None):
         """
         Add a successor state of the SimRun.
         This procedure stores method parameters into state.scratch, does some housekeeping,
@@ -102,6 +102,7 @@ class SimSuccessors:
                                   statement (for example, from a SimProcedure).
         :param int exit_ins_addr: The instruction pointer of this exit, which is an integer by default.
         :param int source:        The source of the jump (i.e., the address of the basic block).
+        :param jump_lr:           For call-like insns, register containing the return address, if any.
         """
 
         # First, trigger the SimInspect breakpoint
@@ -111,6 +112,7 @@ class SimSuccessors:
         state.history.jumpkind = state._inspect_getattr("exit_jumpkind", jumpkind)
         state.history.jump_target = state.scratch.target
         state.history.jump_guard = state.scratch.guard
+        state.history.jump_lr = jump_lr
 
         # track some vex-specific stuff here for now
         state.scratch.source = source if source is not None else self.addr
@@ -182,6 +184,8 @@ class SimSuccessors:
             try:
                 if state.arch.call_pushes_ret:
                     ret_addr = state.mem[state.regs._sp].long.concrete
+                elif state.history.jump_lr is not None:
+                    ret_addr = state.solver.eval(state.history.jump_lr)
                 else:
                     ret_addr = state.solver.eval(state.regs._lr)
             except SimSolverModeError:

@@ -39,6 +39,7 @@ class SimStateHistory(SimStatePlugin):
         self.jump_avoidable = None if clone is None else clone.jump_avoidable
         self.jump_guard = None if clone is None else clone.jump_guard
         self.jumpkind = None if clone is None else clone.jumpkind
+        self.jump_lr = None if clone is None else clone.jump_lr
 
         # the execution log for this history
         self.recent_events = [ ] if clone is None else list(clone.recent_events)
