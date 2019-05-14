@@ -359,6 +359,9 @@ class VFG(ForwardAnalysis, Analysis):   # pylint:disable=abstract-method
         # Start analysis
         self._analyze()
 
+    def nodes(self):
+        return self._nodes.values()
+
     #
     # Internal properties
     #
