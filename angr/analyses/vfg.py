@@ -1329,6 +1329,9 @@ class VFG(ForwardAnalysis, Analysis):   # pylint:disable=abstract-method
         error_occured = False
         restart_analysis = False
 
+        if addr in self._avoid_runs:
+            return [], error_occured, restart_analysis
+
         jumpkind = 'Ijk_Boring'
         if state.history.jumpkind:
             jumpkind = state.history.jumpkind
