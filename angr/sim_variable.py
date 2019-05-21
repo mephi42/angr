@@ -1,5 +1,6 @@
 import collections
 import claripy
+from claripy.backend_manager import backends
 
 class SimVariable:
 
@@ -160,7 +161,7 @@ class SimMemoryVariable(SimVariable):
     def __eq__(self, other):
         if isinstance(other, SimMemoryVariable):
             return self.ident == other.ident and \
-                   self.addr == other.addr and \
+                   backends.vsa.is_true(self.addr == other.addr) and \
                    self.size == other.size
 
         return False
